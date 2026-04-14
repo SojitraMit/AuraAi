@@ -4,18 +4,23 @@ import Chat from "./pages/Chat";
 import Login from "./pages/Login";
 import { Provider } from "react-redux";
 import appStore from "./utils/appStore";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
     <Provider store={appStore}>
-      <BrowserRouter basename="/">
-        <Routes>
-          <Route path="/" element={<Body />}>
-            <Route path="/" element={<Chat />} />
-            <Route path="/login" element={<Login />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter basename="/">
+          <Routes>
+            <Route path="/" element={<Body />}>
+              <Route path="/" element={<Chat />} />
+              <Route path="/login" element={<Login />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </QueryClientProvider>
     </Provider>
   );
 }

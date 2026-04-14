@@ -56,10 +56,10 @@ const Chat = () => {
 
         <div className="pt-4 mt-4 border-t border-white/5 flex flex-col gap-1">
           <a
-            class="flex items-center gap-3 p-3 text-[#ccc3d8] opacity-70 hover:bg-[#1b1a26] hover:opacity-100 rounded-lg transition-all duration-200"
+            className="flex items-center gap-3 p-3 text-[#ccc3d8] opacity-70 hover:bg-[#1b1a26] hover:opacity-100 rounded-lg transition-all duration-200"
             href="#">
-            <span class="material-symbols-outlined text-sm">settings</span>
-            <span class="font-['Inter'] font-medium text-sm tracking-tight">
+            <span className="material-symbols-outlined text-sm">settings</span>
+            <span className="font-['Inter'] font-medium text-sm tracking-tight">
               Settings
             </span>
           </a>
@@ -91,8 +91,8 @@ const Chat = () => {
             <button className="p-2 text-[#ccc3d8] hover:text-white transition-colors">
               <span className="material-symbols-outlined">share</span>
             </button>
-            <button class="p-2 text-[#ccc3d8] hover:text-white transition-colors duration-200">
-              <span class="material-symbols-outlined">more_vert</span>
+            <button className="p-2 text-[#ccc3d8] hover:text-white transition-colors duration-200">
+              <span className="material-symbols-outlined">more_vert</span>
             </button>
           </div>
         </header>

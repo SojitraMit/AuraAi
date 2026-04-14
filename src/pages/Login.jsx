@@ -1,17 +1,73 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useState } from "react";
 import Template from "../components/Template";
+import { useLogin, useSignUp } from "../hooks/useUser";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
+import Lottie from "lottie-react";
+import loading from "../assets/loading.json";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const [isSignup, setIsSignup] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
 
-  const handleSignUp = () => {};
+  const loginMutation = useLogin();
+  const signUpMutation = useSignUp();
 
-  const handleLogin = () => {};
+  const handleSignUp = (event) => {
+    event.preventDefault();
+    signUpMutation.mutate(
+      { email, password },
+      {
+        onError: (error) => {
+          setError(
+            error.response?.data?.detail ||
+              error.response?.data?.message ||
+              "Signup failed. Please try again.",
+          );
+        },
+        onSuccess: (data) => {
+          dispatch(addUser(data));
+          navigate("/");
+        },
+      },
+    );
+  };
+
+  const handleLogin = (event) => {
+    event.preventDefault();
+    loginMutation.mutate(
+      { email, password },
+      {
+        onError: (error) => {
+          const detail = error.response?.data?.detail;
+          console.error(detail);
+
+          if (Array.isArray(detail)) {
+            // FastAPI validation errors — extract the messages
+            setError(detail.map((d) => d.msg).join(", "));
+          } else if (typeof detail === "string") {
+            setError(detail);
+          } else {
+            setError("Login failed. Please try again.");
+          }
+        },
+        onSuccess: (data) => {
+          dispatch(addUser(data));
+          navigate("/");
+        },
+      },
+    );
+  };
 
   return (
     <main className="flex min-h-screen w-full flex-col md:flex-row bg-[#12121d] text-white overflow-y-auto">
@@ -61,8 +117,8 @@ const Login = () => {
               <div>
                 <div className="flex justify-between">
                   <label
-                    class="text-xs font-bold uppercase text-gray-400 tracking-widest text-on-surface-variant/80"
-                    for="password">
+                    className="text-xs font-bold uppercase text-gray-400 tracking-widest text-on-surface-variant/80"
+                    htmlFor="password">
                     Password
                   </label>
                   <span className="text-xs text-purple-400 cursor-pointer">
@@ -145,34 +201,44 @@ const Login = () => {
               {/* Button */}
 
               {isSignup ? (
-                <button
-                  type="submit"
-                  className="w-full rounded-xl bg-gradient-to-br from-purple-700 to-purple-950 py-4 font-bold text-white shadow-lg shadow-purple-700/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2"
-                  onClick={handleSignUp}>
-                  <>
-                    Get started
-                    <span className="material-symbols-outlined text-lg">
-                      arrow_forward
-                    </span>
-                  </>
-                </button>
+                <>
+                  {error && (
+                    <div className="text-red-500 text-sm mb-3">{error}</div>
+                  )}
+                  <button
+                    type="submit"
+                    className="w-full rounded-xl bg-gradient-to-br from-purple-700 to-purple-950 py-4 font-bold text-white shadow-lg shadow-purple-700/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2"
+                    onClick={handleSignUp}>
+                    <>
+                      Get started
+                      <span className="material-symbols-outlined text-lg">
+                        arrow_forward
+                      </span>
+                    </>
+                  </button>
+                </>
               ) : (
-                <button
-                  type="submit"
-                  className="w-full rounded-xl bg-gradient-to-br from-purple-700 to-purple-950 py-4 font-bold text-white shadow-lg shadow-purple-700/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2"
-                  onClick={handleLogin}>
-                  Sign in
-                </button>
+                <>
+                  {error && (
+                    <div className="text-red-500 text-sm mb-3">{error}</div>
+                  )}
+                  <button
+                    type="submit"
+                    className="w-full rounded-xl bg-gradient-to-br from-purple-700 to-purple-950 py-4 font-bold text-white shadow-lg shadow-purple-700/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2"
+                    onClick={handleLogin}>
+                    Sign in
+                  </button>
+                </>
               )}
             </form>
 
             {/* Divider */}
-            <div class="my-8 flex items-center gap-4">
-              <div class="h-[1px] flex-1 bg-white/5"></div>
-              <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest text-on-surface-variant/40">
+            <div className="my-8 flex items-center gap-4">
+              <div className="h-[1px] flex-1 bg-white/5"></div>
+              <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest text-on-surface-variant/40">
                 or continue with
               </span>
-              <div class="h-[1px] flex-1 bg-white/5"></div>
+              <div className="h-[1px] flex-1 bg-white/5"></div>
             </div>
 
             {/* Social */}

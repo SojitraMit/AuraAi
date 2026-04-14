@@ -1,19 +1,13 @@
 import axiosInstance from "../utils/axios";
 
 const user = {
-  login: async (email, password) => {
-    const response = await axiosInstance.post("/auth/login", {
-      email,
-      password,
-    });
+  login: async (data) => {
+    const response = await axiosInstance.post("/auth/login", data);
 
     return response.data;
   },
-  signUp: async (email, password) => {
-    const response = await axiosInstance.post("/auth/signup", {
-      email,
-      password,
-    });
+  signUp: async (data) => {
+    const response = await axiosInstance.post("/auth/signup", data);
     return response.data;
   },
   fetchUser: async () => {

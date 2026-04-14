@@ -1,39 +1,20 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect } from "react";
+import React, { use, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
+import { useFetchUser } from "../hooks/useUser";
+import { addUser } from "../utils/userSlice";
 
 const Body = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userData = useSelector((store) => store.user);
 
-  const fetchUser = async () => {
-    try {
-      // const user = await axios.get(
-      //   BASE_URL + "/profile/view",
-      //   {
-      //     withCredentials: true,
-      //   },
-      // );
-      // dispatch(addUser(user.data));
-      //navigate("/feed");
-      if (userData === null) {
-        return navigate("/login");
-      }
-    } catch (err) {
-      // console.error(err);
-      // if (err.status === 401) {
-      //   return navigate("/login");
-      // }
-    }
-  };
+  const { data, isLoading, error } = useFetchUser();
+  dispatch(addUser(data));
 
   useEffect(() => {
-    //if (!userData) {
-    fetchUser();
-
-    //}
+    if (userData == null) return navigate("/login");
   }, []);
   return (
     <div>

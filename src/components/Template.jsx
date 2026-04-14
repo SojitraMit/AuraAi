@@ -31,20 +31,20 @@ const Template = () => {
             your workflows and let Aura handle the complexity of your daily
             operations.
           </p>
-          <div class="flex flex-wrap gap-4 mt-8">
-            <div class="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full">
-              <span class="material-symbols-outlined text-primary text-sm">
+          <div className="flex flex-wrap gap-4 mt-8">
+            <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full">
+              <span className="material-symbols-outlined text-primary text-sm">
                 verified
               </span>
-              <span class="text-xs font-medium text-white/70">
+              <span className="text-xs font-medium text-white/70">
                 SOC2 Compliant
               </span>
             </div>
-            <div class="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full">
-              <span class="material-symbols-outlined text-primary text-sm">
+            <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full">
+              <span className="material-symbols-outlined text-primary text-sm">
                 bolt
               </span>
-              <span class="text-xs font-medium text-white/70">
+              <span className="text-xs font-medium text-white/70">
                 Sub-100ms Latency
               </span>
             </div>
