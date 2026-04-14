@@ -18,9 +18,9 @@ const Body = () => {
       // );
       // dispatch(addUser(user.data));
       //navigate("/feed");
-      // if (userData === null) {
-      //   return navigate("/login");
-      // }
+      if (userData === null) {
+        return navigate("/login");
+      }
     } catch (err) {
       // console.error(err);
       // if (err.status === 401) {
