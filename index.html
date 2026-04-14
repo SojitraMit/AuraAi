@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AuraAi</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap"
+      rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet" />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "outline-variant": "#4a4455",
+              outline: "#958da1",
+              "on-error-container": "#ffdad6",
+              "inverse-on-surface": "#302f3b",
+              "surface-tint": "#d2bbff",
+              tertiary: "#b1c5ff",
+              "primary-container": "#7c3aed",
+              "tertiary-container": "#2360d2",
+              "surface-dim": "#12121d",
+              "on-secondary-fixed-variant": "#4f319c",
+              "primary-fixed": "#eaddff",
+              "surface-container-highest": "#343440",
+              "primary-fixed-dim": "#d2bbff",
+              "surface-container": "#1f1e2a",
+              "on-tertiary": "#002c71",
+              "secondary-fixed": "#e8ddff",
+              "inverse-primary": "#732ee4",
+              surface: "#12121d",
+              "on-primary": "#3f008e",
+              "on-tertiary-fixed": "#001947",
+              "on-error": "#690005",
+              "surface-container-low": "#1b1a26",
+              secondary: "#cebdff",
+              "on-background": "#e3e0f1",
+              error: "#ffb4ab",
+              "on-secondary-fixed": "#21005e",
+              "inverse-surface": "#e3e0f1",
+              "on-tertiary-container": "#dee5ff",
+              "on-tertiary-fixed-variant": "#00419f",
+              primary: "#d2bbff",
+              "on-surface": "#e3e0f1",
+              "on-surface-variant": "#ccc3d8",
+              "surface-variant": "#343440",
+              background: "#12121d",
+              "tertiary-fixed": "#dae2ff",
+              "surface-bright": "#383845",
+              "surface-container-lowest": "#0d0d18",
+              "secondary-fixed-dim": "#cebdff",
+              "secondary-container": "#4f319c",
+              "on-secondary": "#381385",
+              "on-primary-fixed-variant": "#5a00c6",
+              "on-primary-container": "#ede0ff",
+              "error-container": "#93000a",
+              "on-secondary-container": "#bea8ff",
+              "on-primary-fixed": "#25005a",
+              "surface-container-high": "#292935",
+              "tertiary-fixed-dim": "#b1c5ff",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            fontFamily: {
+              headline: ["Inter"],
+              body: ["Inter"],
+              label: ["Inter"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .aura-gradient {
+        background: linear-gradient(
+          135deg,
+          #0d0d18 0%,
+          #12121d 50%,
+          #4f319c 100%
+        );
+        position: fixed;
+        overflow: hidden;
+      }
+      .aura-gradient::after {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          rgba(124, 58, 237, 0.15) 0%,
+          transparent 60%
+        );
+      }
+      .glass-card {
+        backdrop-filter: blur(20px);
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+    </style>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #12121d;
+        color: #e3e0f1;
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .glass-blur {
+        backdrop-filter: blur(20px);
+      }
+      ::-webkit-scrollbar {
+        width: 4px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(124, 58, 237, 0.2);
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(124, 58, 237, 0.4);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
