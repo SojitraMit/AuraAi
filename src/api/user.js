@@ -11,12 +11,7 @@ const user = {
     return response.data;
   },
   fetchUser: async () => {
-    const token = localStorage.getItem("token"); // wherever you store it
-    const response = await axiosInstance.get("/auth/me", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axiosInstance.get("/auth/me");
     return response.data;
   },
 };

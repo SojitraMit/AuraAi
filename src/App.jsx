@@ -15,8 +15,8 @@ function App() {
         <BrowserRouter basename="/">
           <Routes>
             <Route path="/" element={<Body />}>
-              <Route path="/" element={<Chat />} />
-              <Route path="/login" element={<Login />} />
+              <Route path="/chat/:sessionId" element={<Chat />} />
+              <Route index element={<Login />} />
             </Route>
           </Routes>
         </BrowserRouter>
