@@ -7,11 +7,16 @@ const user = {
     return response.data;
   },
   signUp: async (data) => {
-    const response = await axiosInstance.post("/auth/signup", data);
+    const response = await axiosInstance.post("/auth/register", data);
     return response.data;
   },
   fetchUser: async () => {
-    const response = await axiosInstance.get("/auth/me");
+    const token = localStorage.getItem("token"); // wherever you store it
+    const response = await axiosInstance.get("/auth/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   },
 };

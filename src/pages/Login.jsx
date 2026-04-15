@@ -1,12 +1,11 @@
-/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import Template from "../components/Template";
 import { useLogin, useSignUp } from "../hooks/useUser";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
-import Lottie from "lottie-react";
-import loading from "../assets/loading.json";
+import Cookies from "js-cookie";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,26 +16,38 @@ const Login = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [isSignup, setIsSignup] = React.useState(false);
   const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const loginMutation = useLogin();
   const signUpMutation = useSignUp();
+  const isPending = loginMutation.isPending || signUpMutation.isPending;
 
   const handleSignUp = (event) => {
     event.preventDefault();
+    if (isSignup && password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // Simulate loading for 2 seconds
     signUpMutation.mutate(
       { email, password },
       {
         onError: (error) => {
-          setError(
-            error.response?.data?.detail ||
-              error.response?.data?.message ||
-              "Signup failed. Please try again.",
-          );
+          setTimeout(() => {
+            setError(
+              error.response?.data?.detail ||
+                error.response?.data?.message ||
+                "Signup failed. Please try again.",
+            );
+          }, 1400);
         },
         onSuccess: (data) => {
-          dispatch(addUser(data));
+          Cookies.set("token", data.access_token, { expires: 7 }); // expires in 7 days
+          dispatch(addUser(data.user));
           navigate("/");
         },
       },
@@ -45,24 +56,33 @@ const Login = () => {
 
   const handleLogin = (event) => {
     event.preventDefault();
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // Simulate loading for 2 seconds
+
     loginMutation.mutate(
       { email, password },
       {
         onError: (error) => {
-          const detail = error.response?.data?.detail;
-          console.error(detail);
+          setTimeout(() => {
+            const detail = error.response?.data?.detail;
+            // console.error(detail);
 
-          if (Array.isArray(detail)) {
-            // FastAPI validation errors — extract the messages
-            setError(detail.map((d) => d.msg).join(", "));
-          } else if (typeof detail === "string") {
-            setError(detail);
-          } else {
-            setError("Login failed. Please try again.");
-          }
+            if (Array.isArray(detail)) {
+              // FastAPI validation errors — extract the messages
+              setError(detail.map((d) => d.msg).join(", "));
+            } else if (typeof detail === "string") {
+              setIsLoading(false);
+              setError(detail);
+            } else {
+              setError("Login failed. Please try again.");
+            }
+          }, 1800); // Simulate loading for 2 seconds
         },
         onSuccess: (data) => {
-          dispatch(addUser(data));
+          Cookies.set("token", data.access_token, { expires: 7 }); // expires in 7 days
+          dispatch(addUser(data.user));
           navigate("/");
         },
       },
@@ -92,7 +112,9 @@ const Login = () => {
               </p>
             </div>
 
-            <form className="space-y-6">
+            <form
+              className="space-y-6"
+              onSubmit={isSignup ? handleSignUp : handleLogin}>
               {/* Email */}
               <div>
                 <label className="text-xs uppercase text-gray-400 tracking-widest text-on-surface-variant/80 font-bold">
@@ -200,35 +222,57 @@ const Login = () => {
 
               {/* Button */}
 
+              {/* ERROR (only once) */}
+              {error && (
+                <div className="text-red-500 text-sm mb-3">{error}</div>
+              )}
+
               {isSignup ? (
-                <>
-                  {error && (
-                    <div className="text-red-500 text-sm mb-3">{error}</div>
+                <button
+                  type="submit"
+                  disabled={isPending || isLoading}
+                  className="w-full h-[56px] rounded-xl bg-gradient-to-br from-purple-700 to-purple-950 font-bold text-white shadow-lg shadow-purple-700/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center relative overflow-hidden disabled:opacity-70">
+                  {/* TEXT */}
+                  <span
+                    className={`flex items-center gap-2 transition-all duration-200 ${
+                      isPending || isLoading
+                        ? "opacity-0 scale-95"
+                        : "opacity-100"
+                    }`}>
+                    Get started
+                    <span className="material-symbols-outlined text-lg">
+                      arrow_forward
+                    </span>
+                  </span>
+
+                  {/* LOTTIE */}
+                  {(isPending || isLoading) && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <DotLottieReact
+                        src="https://lottie.host/12991057-9077-404d-816c-e93f2787a942/sHUbqllBWt.lottie"
+                        loop
+                        autoplay
+                        className="w-32 h-32"
+                      />
+                    </div>
                   )}
-                  <button
-                    type="submit"
-                    className="w-full rounded-xl bg-gradient-to-br from-purple-700 to-purple-950 py-4 font-bold text-white shadow-lg shadow-purple-700/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2"
-                    onClick={handleSignUp}>
-                    <>
-                      Get started
-                      <span className="material-symbols-outlined text-lg">
-                        arrow_forward
-                      </span>
-                    </>
-                  </button>
-                </>
+                </button>
               ) : (
-                <>
-                  {error && (
-                    <div className="text-red-500 text-sm mb-3">{error}</div>
+                <button
+                  type="submit"
+                  disabled={isPending}
+                  className="w-full h-[56px] rounded-xl bg-gradient-to-br from-purple-700 to-purple-950 font-bold text-white shadow-lg shadow-purple-700/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center relative overflow-hidden disabled:opacity-70">
+                  {isPending || isLoading ? (
+                    <DotLottieReact
+                      src="https://lottie.host/12991057-9077-404d-816c-e93f2787a942/sHUbqllBWt.lottie"
+                      loop
+                      autoplay
+                      className="w-32 h-32"
+                    />
+                  ) : (
+                    "Sign in"
                   )}
-                  <button
-                    type="submit"
-                    className="w-full rounded-xl bg-gradient-to-br from-purple-700 to-purple-950 py-4 font-bold text-white shadow-lg shadow-purple-700/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2"
-                    onClick={handleLogin}>
-                    Sign in
-                  </button>
-                </>
+                </button>
               )}
             </form>
 
