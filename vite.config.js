@@ -9,7 +9,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/auth": {
-        target: "https://aura-ai-pearl.vercel.app",
+        target: "https://ai-agent-backend-b0dh.onrender.com",
         changeOrigin: true,
         secure: true,
       },
