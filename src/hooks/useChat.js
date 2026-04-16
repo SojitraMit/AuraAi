@@ -8,6 +8,7 @@ export const useAllSessions = () => {
     onError: (error) => {
       console.error("Fetch sessions failed:", error);
     },
+    // Don't retry on failure
   });
   return result;
 };

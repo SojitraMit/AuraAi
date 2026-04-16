@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Template from "../components/Template";
 import { useLogin, useSignUp } from "../hooks/useUser";
 import { useNavigate } from "react-router-dom";
@@ -6,10 +6,13 @@ import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import Cookies from "js-cookie";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { useAllSessions } from "../hooks/useChat";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +21,13 @@ const Login = () => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [sessionId, setSessionId] = useState(null);
 
+  const {
+    data: sessionData,
+    isLoading: sessionLoading,
+    error: sessionError,
+  } = useAllSessions();
   const loginMutation = useLogin();
   const signUpMutation = useSignUp();
   const isPending = loginMutation.isPending || signUpMutation.isPending;
@@ -48,6 +57,7 @@ const Login = () => {
         onSuccess: (data) => {
           Cookies.set("token", data.access_token, { expires: 7 }); // expires in 7 days
           dispatch(addUser(data.user));
+          // Refetch sessions after signup
           navigate("/");
         },
       },
@@ -83,11 +93,31 @@ const Login = () => {
         onSuccess: (data) => {
           Cookies.set("token", data.access_token, { expires: 7 }); // expires in 7 days
           dispatch(addUser(data.user));
-          navigate("/");
+          // Refetch sessions after login
+          queryClient.invalidateQueries(["allSessions"]);
         },
       },
     );
   };
+
+  useEffect(() => {
+    if (!sessionLoading && sessionData) {
+      navigate(`/chat/${sessionData.sessions[0].session_id}`);
+    }
+  }, [sessionData, sessionLoading]);
+
+  // if (sessionLoading) {
+  //   return (
+  //     <div className="flex items-center justify-center h-screen w-full bg-[#12121d]">
+  //       <DotLottieReact
+  //         src="https://lottie.host/12991057-9077-404d-816c-e93f2787a942/sHUbqllBWt.lottie"
+  //         loop
+  //         autoplay
+  //         className="w-32 h-32"
+  //       />
+  //     </div>
+  //   );
+  // }
 
   return (
     <main className="flex min-h-screen w-full flex-col md:flex-row bg-[#12121d] text-white overflow-y-auto">
@@ -246,7 +276,7 @@ const Login = () => {
                   </span>
 
                   {/* LOTTIE */}
-                  {(isPending || isLoading) && (
+                  {(isPending || isLoading || sessionLoading) && (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <DotLottieReact
                         src="https://lottie.host/12991057-9077-404d-816c-e93f2787a942/sHUbqllBWt.lottie"

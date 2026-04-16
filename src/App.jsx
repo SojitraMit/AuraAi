@@ -16,7 +16,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Body />}>
               <Route path="/chat/:sessionId" element={<Chat />} />
-              <Route index element={<Login />} />
+              <Route path="/" element={<Login />} />
             </Route>
           </Routes>
         </BrowserRouter>

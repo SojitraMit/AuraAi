@@ -1,25 +1,22 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Outlet, useNavigate } from "react-router-dom";
+import React, { useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useFetchUser } from "../hooks/useUser";
 import { addUser } from "../utils/userSlice";
 import { v4 as uuidv4 } from "uuid";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { useAllSessions, useNewSession } from "../hooks/useChat";
-import { useRef } from "react";
 
 const Body = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { data, isLoading, error } = useFetchUser();
   const { data: sessionData, isLoading: sessionLoading } = useAllSessions();
 
   const hasNavigated = useRef(false);
-
   const newSessionMutation = useNewSession();
-
-  const userData = useSelector((store) => store.user);
 
   // ✅ 1. Save user
   useEffect(() => {
@@ -28,20 +25,24 @@ const Body = () => {
     }
   }, [data, dispatch]);
 
-  // ✅ 2. Handle session + navigation (MAIN LOGIC)
+  // ✅ 2. If no token / 401 → go to login immediately
+  useEffect(() => {
+    if (!isLoading && error && location.pathname !== "/") {
+      navigate("/");
+    }
+  }, [isLoading, error, location.pathname, navigate]);
 
+  // ✅ 3. Handle session navigation
   useEffect(() => {
     if (!isLoading && !sessionLoading && data && !hasNavigated.current) {
       hasNavigated.current = true;
 
-      if (sessionData && sessionData.length > 0) {
-        navigate(`/chat/${sessionData[0].session_id}`);
-      }
+      const sessions = sessionData?.sessions || [];
 
-      // ✅ ONLY create if sessionData is EMPTY (not undefined)
-      else if (sessionData && sessionData.length === 0) {
+      if (sessions.length > 0) {
+        navigate(`/chat/${sessions[0].session_id}`);
+      } else {
         const session_id = `session-${uuidv4()}`;
-
         newSessionMutation.mutate(
           { name: "New Chat", session_id },
           {
@@ -53,15 +54,9 @@ const Body = () => {
       }
     }
   }, [isLoading, sessionLoading, data, sessionData]);
-  // ✅ 3. Handle auth failure
-  useEffect(() => {
-    if (!isLoading && error) {
-      navigate("/");
-    }
-  }, [isLoading, error, navigate]);
 
-  // ✅ 4. Loading UI
-  if (isLoading || sessionLoading) {
+  // ✅ 4. Show loading only while fetching (not on error)
+  if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#12121d]">
         <DotLottieReact
@@ -73,6 +68,9 @@ const Body = () => {
       </div>
     );
   }
+
+  // ✅ 5. Allow login page to render when the user is unauthenticated
+  if (error && location.pathname !== "/") return null;
 
   return <Outlet />;
 };

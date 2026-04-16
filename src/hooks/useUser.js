@@ -32,6 +32,7 @@ export const useFetchUser = () => {
     onError: (error) => {
       console.error("Fetch user failed:", error);
     },
+    retry: false, // Don't retry on failure (e.g., 401)
   });
   return result;
 };
