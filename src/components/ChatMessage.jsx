@@ -1,5 +1,5 @@
 const ChatMessage = ({ msg }) => {
-  const isAi = msg.role === "ai";
+  const isAi = msg.role === "assistant";
   return (
     <div className={`flex gap-4 ${!isAi ? "flex-col items-end" : ""}`}>
       {isAi && (
@@ -11,7 +11,7 @@ const ChatMessage = ({ msg }) => {
         </div>
       )}
       <div
-        className={`${!isAi ? "bg-[#7c3aed] text-white px-5 py-3.5 rounded-2xl rounded-tr-none shadow-lg max-w-[85%]" : "flex-1 space-y-4"}`}>
+        className={`${!isAi && msg.content ? "bg-[#7c3aed] text-white px-5 py-3.5 rounded-2xl rounded-tr-none shadow-lg max-w-[85%]" : "flex-1 space-y-4"}`}>
         {isAi && (
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-[#d2bbff] tracking-widest uppercase">
@@ -24,7 +24,7 @@ const ChatMessage = ({ msg }) => {
         )}
         <div
           className={`${isAi ? "text-white leading-relaxed text-[15px]" : "text-sm"}`}>
-          {msg.text}
+          {msg.content}
         </div>
       </div>
       {!isAi && (

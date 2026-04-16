@@ -1,6 +1,10 @@
 import axiosInstance from "../utils/axios";
 
 const chat = {
+  chat: async (data) => {
+    const response = await axiosInstance.post("/chat", data);
+    return response.data;
+  },
   allSessions: async () => {
     const response = await axiosInstance.get("/chat/sessions");
     return response.data;

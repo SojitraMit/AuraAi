@@ -4,9 +4,9 @@ import SidebarItem from "../components/SidebarItem";
 import ChatMessage from "../components/ChatMessage";
 import ChatLeftPanel from "../components/ChatLeftPanel";
 import { useParams } from "react-router-dom";
-import { useChatHistory } from "../hooks/useChat";
+import { useChat, useChatHistory } from "../hooks/useChat";
 import { useDispatch, useSelector } from "react-redux";
-import { allChats } from "../utils/chatSlice";
+import { addChat, allChats } from "../utils/chatSlice";
 
 const Chat = () => {
   const sessionId = useParams().sessionId;
@@ -17,6 +17,7 @@ const Chat = () => {
     isLoading: chatHistoryLoading,
     error,
   } = useChatHistory(sessionId);
+  const chatMutation = useChat();
   const allMessages = useSelector((store) => store.chat?.messages || []);
   const [messages, setMessages] = useState([
     {
@@ -33,9 +34,58 @@ const Chat = () => {
       time: "10:42 AM",
     },
   ]);
+  const [input, setInput] = useState("");
+
+  const handleSendMessage = () => {
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        role: "user",
+        text: input,
+        time: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      },
+    ]);
+    addChat({
+      id: Date.now(),
+      role: "user",
+      text: input,
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    });
+
+    if (input.trim()) {
+      chatMutation.mutate(
+        { session_id: sessionId, message: input },
+        {
+          onSuccess: (aiAns) => {
+            const newMessage = {
+              content: aiAns.replay,
+              role: "assistant",
+              id: Date.now() + 1,
+              time: new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            };
+            setMessages((prev) => [...prev, newMessage]);
+            dispatch(addChat(newMessage));
+          },
+        },
+      );
+      setInput("");
+    }
+    setInput("");
+  };
 
   useEffect(() => {
     if (!chatHistoryLoading && chatHistory) {
+      setMessages(chatHistory.messages);
       dispatch(allChats(chatHistory.messages));
     }
   }, [chatHistory, chatHistoryLoading, error]);
@@ -87,10 +137,14 @@ const Chat = () => {
                   placeholder="Message AuraAI..."
                   rows={1}
                   className="w-full bg-transparent border-none focus:ring-0 text-gray-200 text-sm py-2 resize-none max-h-40 min-h-[44px] placeholder:text-gray-400/40 outline-none"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
                 />
 
                 {/* Send button */}
-                <button className="bg-purple-600 text-white w-10 h-10 flex items-center justify-center rounded-xl shadow-[0_0_15px_rgba(124,58,237,0.3)] hover:scale-105 transition-transform active:scale-95">
+                <button
+                  className="bg-purple-600 text-white w-10 h-10 flex items-center justify-center rounded-xl shadow-[0_0_15px_rgba(124,58,237,0.3)] hover:scale-105 transition-transform active:scale-95"
+                  onClick={handleSendMessage}>
                   <span className="material-symbols-outlined">send</span>
                 </button>
               </div>

@@ -6,8 +6,9 @@ import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import Cookies from "js-cookie";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import { useAllSessions } from "../hooks/useChat";
+import { useAllSessions, useNewSession } from "../hooks/useChat";
 import { useQueryClient } from "@tanstack/react-query";
+import { v4 as uuidv4 } from "uuid";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const Login = () => {
   } = useAllSessions();
   const loginMutation = useLogin();
   const signUpMutation = useSignUp();
+  const newSessionMutation = useNewSession();
   const isPending = loginMutation.isPending || signUpMutation.isPending;
 
   const handleSignUp = (event) => {
@@ -57,8 +59,17 @@ const Login = () => {
         onSuccess: (data) => {
           Cookies.set("token", data.access_token, { expires: 7 }); // expires in 7 days
           dispatch(addUser(data.user));
+          queryClient.invalidateQueries(["allSessions"]);
           // Refetch sessions after signup
-          navigate("/");
+          // newSessionMutation.mutate(
+          //   { name: "New Chat", session_id: `session-${uuidv4()}` },
+          //   {
+          //     onSuccess: (newSession) => {
+          //       navigate(`/chat/${newSession.session_id}`);
+          //     },
+          //   },
+          // );
+          // navigate("/");
         },
       },
     );
@@ -100,11 +111,11 @@ const Login = () => {
     );
   };
 
-  useEffect(() => {
-    if (!sessionLoading && sessionData) {
-      navigate(`/chat/${sessionData.sessions[0].session_id}`);
-    }
-  }, [sessionData, sessionLoading]);
+  // useEffect(() => {
+  //   if (!sessionLoading && sessionData) {
+  //     navigate(`/chat/${sessionData.sessions[0].session_id}`);
+  //   }
+  // }, [sessionData, sessionLoading]);
 
   // if (sessionLoading) {
   //   return (
@@ -265,7 +276,7 @@ const Login = () => {
                   {/* TEXT */}
                   <span
                     className={`flex items-center gap-2 transition-all duration-200 ${
-                      isPending || isLoading
+                      isPending || isLoading || sessionLoading
                         ? "opacity-0 scale-95"
                         : "opacity-100"
                     }`}>
@@ -292,7 +303,7 @@ const Login = () => {
                   type="submit"
                   disabled={isPending}
                   className="w-full h-[56px] rounded-xl bg-gradient-to-br from-purple-700 to-purple-950 font-bold text-white shadow-lg shadow-purple-700/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center relative overflow-hidden disabled:opacity-70">
-                  {isPending || isLoading ? (
+                  {isPending || isLoading || sessionLoading ? (
                     <DotLottieReact
                       src="https://lottie.host/12991057-9077-404d-816c-e93f2787a942/sHUbqllBWt.lottie"
                       loop

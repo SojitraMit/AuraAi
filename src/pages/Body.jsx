@@ -56,7 +56,7 @@ const Body = () => {
   }, [isLoading, sessionLoading, data, sessionData]);
 
   // ✅ 4. Show loading only while fetching (not on error)
-  if (isLoading) {
+  if (isLoading || newSessionMutation.isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#12121d]">
         <DotLottieReact

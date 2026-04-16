@@ -1,6 +1,17 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import chat from "../api/chat";
 
+export const useChat = () => {
+  const result = useMutation({
+    mutationKey: ["chat"],
+    mutationFn: chat.chat,
+    onError: (error) => {
+      console.error("Chat failed:", error);
+    },
+  });
+  return result;
+};
+
 export const useAllSessions = () => {
   const result = useQuery({
     queryKey: ["allSessions"],
@@ -8,7 +19,6 @@ export const useAllSessions = () => {
     onError: (error) => {
       console.error("Fetch sessions failed:", error);
     },
-    // Don't retry on failure
   });
   return result;
 };
