@@ -34,6 +34,7 @@ const Body = () => {
 
   // ✅ 3. Handle session navigation
   useEffect(() => {
+    if (location.pathname.startsWith("/chat")) return;
     if (!isLoading && !sessionLoading && data && !hasNavigated.current) {
       hasNavigated.current = true;
 
@@ -58,7 +59,7 @@ const Body = () => {
   // ✅ 4. Show loading only while fetching (not on error)
   if (isLoading || newSessionMutation.isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#12121d]">
+      <div className="flex min-h-screen  items-center justify-center  bg-[#12121d]">
         <DotLottieReact
           src="https://lottie.host/12991057-9077-404d-816c-e93f2787a942/sHUbqllBWt.lottie"
           loop

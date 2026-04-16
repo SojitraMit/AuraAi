@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SidebarItem from "../components/SidebarItem";
 import ChatMessage from "../components/ChatMessage";
 import ChatLeftPanel from "../components/ChatLeftPanel";
@@ -36,51 +36,53 @@ const Chat = () => {
   ]);
   const [input, setInput] = useState("");
 
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const messagesEndRef = useRef(null); // ✅ add this ref
+
+  // ✅ Auto scroll on new messages
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   const handleSendMessage = () => {
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        role: "user",
-        text: input,
-        time: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      },
-    ]);
-    addChat({
+    if (!input.trim()) return; // ✅ move guard to top
+
+    const userMessage = {
       id: Date.now(),
       role: "user",
-      text: input,
+      content: input,
       time: new Date().toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
       }),
-    });
+    };
 
-    if (input.trim()) {
-      chatMutation.mutate(
-        { session_id: sessionId, message: input },
-        {
-          onSuccess: (aiAns) => {
-            const newMessage = {
-              content: aiAns.replay,
-              role: "assistant",
-              id: Date.now() + 1,
-              time: new Date().toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              }),
-            };
-            setMessages((prev) => [...prev, newMessage]);
-            dispatch(addChat(newMessage));
-          },
-        },
-      );
-      setInput("");
-    }
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
+    setIsAiLoading(true); // ✅ show loading
+
+    chatMutation.mutate(
+      { session_id: sessionId, message: input },
+      {
+        onSuccess: (aiAns) => {
+          const newMessage = {
+            content: aiAns.reply,
+            role: "assistant",
+            id: Date.now() + 1,
+            time: new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          };
+          setMessages((prev) => [...prev, newMessage]);
+          dispatch(addChat(newMessage));
+          setIsAiLoading(false); // ✅ hide loading
+        },
+        onError: () => {
+          setIsAiLoading(false); // ✅ hide on error too
+        },
+      },
+    );
   };
 
   useEffect(() => {
@@ -114,11 +116,19 @@ const Chat = () => {
           </div>
         </header>
 
-        <section className="flex-1 overflow-y-auto pt-8 pb-32">
+        <section className="flex-1 overflow-y-auto pt-8 pb-32 custom-scroll">
           <div className="max-w-[760px] mx-auto px-4 space-y-10">
             {messages.map((msg) => (
               <ChatMessage key={msg.id} msg={msg} />
             ))}
+
+            {/* ✅ AI loading bubble */}
+            {isAiLoading && (
+              <ChatMessage msg={{ role: "assistant", isLoading: true }} />
+            )}
+
+            {/* ✅ Scroll anchor */}
+            <div ref={messagesEndRef} />
           </div>
         </section>
 
@@ -139,6 +149,12 @@ const Chat = () => {
                   className="w-full bg-transparent border-none focus:ring-0 text-gray-200 text-sm py-2 resize-none max-h-40 min-h-[44px] placeholder:text-gray-400/40 outline-none"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault(); // ✅ Shift+Enter = new line, Enter = send
+                      handleSendMessage();
+                    }
+                  }}
                 />
 
                 {/* Send button */}

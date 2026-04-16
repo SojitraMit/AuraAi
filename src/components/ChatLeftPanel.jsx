@@ -1,11 +1,29 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import React, { use, useEffect, useState } from "react";
 import SidebarItem from "./SidebarItem";
-import { useAllSessions } from "../hooks/useChat";
+import { useAllSessions, useNewSession } from "../hooks/useChat";
+import { v4 as uuidv4 } from "uuid";
+import { useNavigate } from "react-router-dom";
 
 const ChatLeftPanel = ({ sessionId }) => {
+  const navigate = useNavigate();
   const [recentSessions, setRecentSessions] = useState([]);
   const { data, isLoading, error } = useAllSessions();
+
+  const newSessionMutation = useNewSession();
+
+  const handleNewSession = () => {
+    // Logic to create a new session and navigate to it
+    newSessionMutation.mutate(
+      { name: "New Chat", session_id: `session-${uuidv4()}` },
+      {
+        onSuccess: (newSession) => {
+          navigate(`/chat/${newSession.session_id}`);
+        },
+      },
+    );
+    // This can be done by calling the API to create a new session and then updating the state
+  };
 
   useEffect(() => {
     if (!isLoading && data) {
@@ -30,7 +48,9 @@ const ChatLeftPanel = ({ sessionId }) => {
         </div>
       </div>
 
-      <button className="w-full flex items-center justify-center gap-2 py-3 px-4 mb-6 bg-gradient-to-r from-[#7c3aed] to-[#4f319c] text-white rounded-xl font-semibold shadow-[0px_4px_20px_rgba(124,58,237,0.25)] hover:scale-[0.98] transition-all">
+      <button
+        className="w-full flex items-center justify-center cursor-pointer gap-2 py-3 px-4 mb-6 bg-gradient-to-r from-[#7c3aed] to-[#4f319c] text-white rounded-xl font-semibold shadow-[0px_4px_20px_rgba(124,58,237,0.25)] hover:scale-[0.98] transition-all"
+        onClick={handleNewSession}>
         <span className="material-symbols-outlined text-sm">add</span>
         <span className="text-sm font-medium tracking-tight">New Chat</span>
       </button>
@@ -42,6 +62,7 @@ const ChatLeftPanel = ({ sessionId }) => {
         {recentSessions.map((session) => (
           <SidebarItem
             key={session.id}
+            session_id={session.session_id}
             icon="chat_bubble"
             label={session.name}
             active={session.session_id === sessionId}
