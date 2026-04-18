@@ -171,6 +171,7 @@ const Login = () => {
                     type="email"
                     placeholder="name@company.com"
                     className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#2a2935] focus:ring-2 focus:ring-purple-500 outline-none"
+                    required
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
@@ -197,7 +198,8 @@ const Login = () => {
                   <input
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
-                    className="w-full pl-10 pr-10 py-3 rounded-xl bg-[#2a2935] focus:ring-2 focus:ring-purple-500 outline-none"
+                    className="w-full pl-10 pr-10 py-3 rounded-xl bg-[#2a2935] focus:ring-2 focus:ring-purple-500 outline-none "
+                    required
                     onChange={(e) => setPassword(e.target.value)}
                   />
 
@@ -227,6 +229,7 @@ const Login = () => {
                       type="password"
                       placeholder="••••••••"
                       className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#2a2935] focus:ring-2 focus:ring-purple-500 outline-none"
+                      required
                       onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                   </div>
@@ -272,7 +275,7 @@ const Login = () => {
                 <button
                   type="submit"
                   disabled={isPending || isLoading}
-                  className="w-full h-[56px] rounded-xl bg-gradient-to-br from-purple-700 to-purple-950 font-bold text-white shadow-lg shadow-purple-700/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center relative overflow-hidden disabled:opacity-70">
+                  className="w-full h-[56px] rounded-xl bg-gradient-to-br from-purple-700 to-purple-950 font-bold text-white shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center relative overflow-hidden disabled:opacity-70">
                   {/* TEXT */}
                   <span
                     className={`flex items-center gap-2 transition-all duration-200 ${
@@ -290,10 +293,10 @@ const Login = () => {
                   {(isPending || isLoading || sessionLoading) && (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <DotLottieReact
-                        src="https://lottie.host/12991057-9077-404d-816c-e93f2787a942/sHUbqllBWt.lottie"
+                        src="https://lottie.host/53df30d1-b040-4ad6-b20f-0f86eba0afdf/9d1DZXJlTx.lottie"
                         loop
                         autoplay
-                        className="w-32 h-32"
+                        className="w-24 h-24"
                       />
                     </div>
                   )}
@@ -302,13 +305,13 @@ const Login = () => {
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="w-full h-[56px] rounded-xl bg-gradient-to-br from-purple-700 to-purple-950 font-bold text-white shadow-lg shadow-purple-700/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center relative overflow-hidden disabled:opacity-70">
+                  className="w-full h-[56px] rounded-xl bg-gradient-to-br from-purple-700 to-purple-950 font-bold text-white shadow-lg  hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center relative overflow-hidden disabled:opacity-70">
                   {isPending || isLoading || sessionLoading ? (
                     <DotLottieReact
-                      src="https://lottie.host/12991057-9077-404d-816c-e93f2787a942/sHUbqllBWt.lottie"
+                      src="https://lottie.host/53df30d1-b040-4ad6-b20f-0f86eba0afdf/9d1DZXJlTx.lottie"
                       loop
                       autoplay
-                      className="w-32 h-32"
+                      className="w-24 h-24"
                     />
                   ) : (
                     "Sign in"

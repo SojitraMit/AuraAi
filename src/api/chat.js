@@ -17,6 +17,13 @@ const chat = {
     const response = await axiosInstance.get(`/chat/history/${session_id}`);
     return response.data;
   },
+  renameSession: async (data) => {
+    const response = await axiosInstance.put(
+      `/chat/sessions/${data.session_id}`,
+      { name: data.name },
+    );
+    return response.data;
+  },
 };
 
 export default chat;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const ContextPanel = () => {
+const ContextPanel = ({ msgLength, intent }) => {
   const [activeTab1, setActiveTab1] = useState(true);
   return (
     <aside className="w-[280px] h-screen flex-shrink-0 flex flex-col p-6 bg-[#0d0d18]">
@@ -72,19 +72,19 @@ const ContextPanel = () => {
           <div className="grid grid-cols-2 gap-2">
             <div className="bg-[#1b1a26] p-3 rounded-xl border border-white/5">
               <p className="text-[10px] text-gray-400 mb-1">Messages</p>
-              <p className="text-sm font-bold text-white">42</p>
+              <p className="text-sm font-bold text-white">{msgLength / 2}</p>
             </div>
 
             <div className="bg-[#1b1a26] p-3 rounded-xl border border-white/5">
               <p className="text-[10px] text-gray-400 mb-1">Tokens</p>
-              <p className="text-sm font-bold text-white">1.2k</p>
+              <p className="text-sm font-bold text-white">{msgLength * 67}</p>
             </div>
           </div>
 
           <div className="bg-[#1b1a26] p-3 rounded-xl border border-white/5">
             <p className="text-[10px] text-gray-400 mb-1">Current Intent</p>
             <p className="text-xs text-white leading-relaxed">
-              Architectural Design Systems & UI Engineering
+              {intent || "General Inquiry"}
             </p>
           </div>
         </section>

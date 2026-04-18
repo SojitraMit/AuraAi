@@ -21,21 +21,8 @@ const Chat = () => {
   } = useChatHistory(sessionId);
   const chatMutation = useChat();
   const allMessages = useSelector((store) => store.chat?.messages || []);
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      role: "user",
-      text: "Can you analyze the recent design trends in high-end AI dashboards? I'm looking for specifics on depth and surface hierarchy.",
-      time: "10:42 AM",
-    },
-    {
-      id: 2,
-      role: "ai",
-      text: "Modern high-end AI interfaces are shifting towards Atmospheric Persistence...",
-      isAnalysis: true,
-      time: "10:42 AM",
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
+  const [intent, setIntent] = useState("");
   const [input, setInput] = useState("");
 
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -85,6 +72,7 @@ const Chat = () => {
           setMessages((prev) => [...prev, newMessage]);
           dispatch(addChat(newMessage));
           setIsAiLoading(false);
+          setIntent(aiAns.intent || "General");
         },
         onError: () => setIsAiLoading(false),
       },
@@ -256,7 +244,7 @@ const Chat = () => {
       </main>
 
       {/* RIGHT CONTEXT PANEL */}
-      <ContextPanel/>
+      <ContextPanel msgLength={messages.length} intent={intent} />
     </div>
   );
 };

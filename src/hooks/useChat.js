@@ -46,3 +46,15 @@ export const useChatHistory = (session_id) => {
 
   return result;
 };
+
+export const useRenameSession = () => {
+  const result = useMutation({
+    mutationKey: ["renameSession"],
+    mutationFn: chat.renameSession,
+    onError: (error) => {
+      console.error("Rename session failed:", error);
+    },
+  });
+
+  return result;
+};
