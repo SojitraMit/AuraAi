@@ -5,12 +5,15 @@ import { useAllSessions, useNewSession } from "../hooks/useChat";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
 
 const ChatLeftPanel = ({ sessionId }) => {
   const navigate = useNavigate();
   const [recentSessions, setRecentSessions] = useState([]);
   const { data, isLoading, error } = useAllSessions();
   const queryClient = useQueryClient();
+
+  const userData = useSelector((state) => state.user);
 
   const newSessionMutation = useNewSession();
 
@@ -112,14 +115,18 @@ const ChatLeftPanel = ({ sessionId }) => {
           </span>
         </a>
         <div className="flex items-center gap-3 p-3 mt-2 bg-[#1b1a26] rounded-xl">
-          <div className="w-8 h-8 rounded-full bg-[#343440]" />
+          <div className="w-8 h-8 rounded-full bg-[#343440] flex items-center justify-center">
+            <span className="material-symbols-outlined text-white text-sm">
+              person
+            </span>
+          </div>
 
           <div className="flex-1 overflow-hidden">
             <p className="font-semibold text-sm text-white truncate">
-              Alex Rivers
+              {userData?.email ? userData.email.split("@")[0] : "Username"}
             </p>
             <p className="text-[10px] text-[#ccc3d8] truncate">
-              alex.r@aura.ai
+              {userData?.email || "User Email"}
             </p>
           </div>
         </div>
