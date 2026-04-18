@@ -4,11 +4,13 @@ import SidebarItem from "./SidebarItem";
 import { useAllSessions, useNewSession } from "../hooks/useChat";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 
 const ChatLeftPanel = ({ sessionId }) => {
   const navigate = useNavigate();
   const [recentSessions, setRecentSessions] = useState([]);
   const { data, isLoading, error } = useAllSessions();
+  const queryClient = useQueryClient();
 
   const newSessionMutation = useNewSession();
 
@@ -18,6 +20,7 @@ const ChatLeftPanel = ({ sessionId }) => {
       { name: "New Chat", session_id: `session-${uuidv4()}` },
       {
         onSuccess: (newSession) => {
+          queryClient.invalidateQueries(["allSessions"]);
           navigate(`/chat/${newSession.session_id}`);
         },
       },
@@ -49,10 +52,39 @@ const ChatLeftPanel = ({ sessionId }) => {
       </div>
 
       <button
-        className="w-full flex items-center justify-center cursor-pointer gap-2 py-3 px-4 mb-6 bg-gradient-to-r from-[#7c3aed] to-[#4f319c] text-white rounded-xl font-semibold shadow-[0px_4px_20px_rgba(124,58,237,0.25)] hover:scale-[0.98] transition-all"
-        onClick={handleNewSession}>
-        <span className="material-symbols-outlined text-sm">add</span>
-        <span className="text-sm font-medium tracking-tight">New Chat</span>
+        className="relative w-full flex items-center justify-center cursor-pointer gap-2 py-3 px-4 mb-6 bg-gradient-to-r from-[#7c3aed] to-[#4f319c] text-white rounded-xl font-semibold shadow-[0px_4px_20px_rgba(124,58,237,0.25)] hover:scale-[0.98] transition-all disabled:opacity-70"
+        onClick={handleNewSession}
+        disabled={newSessionMutation.isPending}>
+        <div
+          className={
+            newSessionMutation.isPending
+              ? "flex items-center justify-center gap-2 opacity-0"
+              : "flex items-center justify-center gap-2"
+          }>
+          <span className="material-symbols-outlined text-sm">add</span>
+          <span className="text-sm font-medium tracking-tight">New Chat</span>
+        </div>
+        {newSessionMutation.isPending && (
+          <svg
+            className="absolute h-8 w-8 animate-spin text-white"
+            viewBox="0 0 24 24"
+            aria-hidden="true">
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+              fill="none"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            />
+          </svg>
+        )}
       </button>
 
       <div className="flex-1 overflow-y-auto space-y-1 pr-2">

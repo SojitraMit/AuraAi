@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useFetchUser } from "../hooks/useUser";
 import { addUser } from "../utils/userSlice";
@@ -12,7 +12,10 @@ const Body = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const userData = useSelector((state) => state.user);
+
   const { data, isLoading, error } = useFetchUser();
+
   const { data: sessionData, isLoading: sessionLoading } = useAllSessions();
 
   const hasNavigated = useRef(false);
@@ -57,7 +60,20 @@ const Body = () => {
   }, [isLoading, sessionLoading, data, sessionData]);
 
   // ✅ 4. Show loading only while fetching (not on error)
-  if (isLoading || newSessionMutation.isLoading) {
+  if (newSessionMutation.isLoading) {
+    return (
+      <div className="flex min-h-screen  items-center justify-center  bg-[#12121d]">
+        <DotLottieReact
+          src="https://lottie.host/12991057-9077-404d-816c-e93f2787a942/sHUbqllBWt.lottie"
+          loop
+          autoplay
+          className="w-40 h-40"
+        />
+      </div>
+    );
+  }
+
+  if (isLoading && location.pathname === "/") {
     return (
       <div className="flex min-h-screen  items-center justify-center  bg-[#12121d]">
         <DotLottieReact
