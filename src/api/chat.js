@@ -24,6 +24,10 @@ const chat = {
     );
     return response.data;
   },
+  deleteSession: async (session_id) => {
+    const response = await axiosInstance.delete(`/chat/sessions/${session_id}`);
+    return response.data;
+  },
 };
 
 export default chat;

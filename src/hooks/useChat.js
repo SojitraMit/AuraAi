@@ -58,3 +58,15 @@ export const useRenameSession = () => {
 
   return result;
 };
+
+export const useDeleteSession = () => {
+  const result = useMutation({
+    mutationKey: ["deleteSession"],
+    mutationFn: chat.deleteSession,
+    onError: (error) => {
+      console.error("Delete session failed:", error);
+    },
+  });
+
+  return result;
+};
