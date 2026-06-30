@@ -27,6 +27,7 @@ const Chat = () => {
 
   const [isAiLoading, setIsAiLoading] = useState(false);
   const messagesEndRef = useRef(null); // ✅ add this ref
+  const canvasRef = useRef(null);
 
   // ✅ Auto scroll on new messages
   useEffect(() => {
